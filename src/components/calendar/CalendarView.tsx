@@ -27,18 +27,24 @@ export function CalendarView() {
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
+
+  // Get all days in the month (1-31)
+  const daysInMonth: Date[] = [];
+  let day = monthStart;
+  while (day <= monthEnd) {
+    daysInMonth.push(day);
+    day = addDays(day, 1);
+  }
+
+  // For desktop: full calendar view with week alignment
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-
   const allDays: Date[] = [];
-  let day = startDate;
+  day = startDate;
   while (day <= endDate) {
     allDays.push(day);
     day = addDays(day, 1);
   }
-
-  // On mobile, limit to 4 rows (28 days)
-  const days = isMobile ? allDays.slice(0, 28) : allDays;
 
   const weekDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 
@@ -73,21 +79,21 @@ export function CalendarView() {
         </div>
       </div>
 
-      {/* Week days header */}
-      <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-1 sm:mb-2">
+      {/* Week days header - Desktop only */}
+      <div className="hidden sm:grid grid-cols-7 gap-2 mb-2">
         {weekDays.map((weekDay) => (
           <div 
             key={weekDay} 
-            className="text-center text-xs sm:text-sm font-semibold text-muted-foreground py-1 sm:py-2"
+            className="text-center text-sm font-semibold text-muted-foreground py-2"
           >
             {weekDay}
           </div>
         ))}
       </div>
 
-      {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1 sm:gap-2">
-        {days.map((dayDate, idx) => {
+      {/* Desktop Calendar grid - 7 columns */}
+      <div className="hidden sm:grid grid-cols-7 gap-2">
+        {allDays.map((dayDate, idx) => {
           const appCount = getApplicationCountByDate(dayDate);
           const isCurrentMonth = isSameMonth(dayDate, currentMonth);
           const isTodayDate = isToday(dayDate);
@@ -97,31 +103,66 @@ export function CalendarView() {
               key={idx}
               onClick={() => handleDateClick(dayDate)}
               className={cn(
-                "relative min-h-[60px] sm:min-h-[80px] p-1 sm:p-2 rounded-lg sm:rounded-xl transition-all duration-200 border",
-                "flex flex-col items-center justify-start gap-0.5 sm:gap-1",
+                "relative min-h-[80px] p-2 rounded-xl transition-all duration-200 border",
+                "flex flex-col items-center justify-start gap-1",
                 "hover:border-primary hover:shadow-md",
                 !isCurrentMonth && "opacity-30 bg-muted/30",
                 isCurrentMonth && "bg-card",
                 isTodayDate && "border-secondary bg-secondary/10"
               )}
             >
-              {/* Date number */}
               <span className={cn(
-                "w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold",
+                "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
                 isTodayDate && "bg-primary text-primary-foreground"
               )}>
                 {format(dayDate, 'd')}
               </span>
               
-              {/* Job count indicator */}
               {appCount > 0 && (
                 <div className={cn(
-                  "flex items-center gap-0.5 sm:gap-1 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold",
+                  "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold",
                   "bg-accent text-accent-foreground"
                 )}>
-                  <Briefcase className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  <span className="hidden sm:inline">{appCount} job</span>
-                  <span className="sm:hidden">{appCount}</span>
+                  <Briefcase className="w-3 h-3" />
+                  <span>{appCount} job</span>
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobile Calendar grid - 4 columns */}
+      <div className="sm:hidden grid grid-cols-4 gap-1.5">
+        {daysInMonth.map((dayDate, idx) => {
+          const appCount = getApplicationCountByDate(dayDate);
+          const isTodayDate = isToday(dayDate);
+
+          return (
+            <button
+              key={idx}
+              onClick={() => handleDateClick(dayDate)}
+              className={cn(
+                "relative min-h-[70px] p-2 rounded-lg transition-all duration-200 border",
+                "flex flex-col items-center justify-start gap-1",
+                "hover:border-primary hover:shadow-md bg-card",
+                isTodayDate && "border-secondary bg-secondary/10"
+              )}
+            >
+              <span className={cn(
+                "w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold",
+                isTodayDate && "bg-primary text-primary-foreground"
+              )}>
+                {format(dayDate, 'd')}
+              </span>
+              
+              {appCount > 0 && (
+                <div className={cn(
+                  "flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold",
+                  "bg-accent text-accent-foreground"
+                )}>
+                  <Briefcase className="w-2.5 h-2.5" />
+                  <span>{appCount}</span>
                 </div>
               )}
             </button>

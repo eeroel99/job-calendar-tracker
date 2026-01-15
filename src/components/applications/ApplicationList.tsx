@@ -96,16 +96,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
   };
 
   return (
-    <Card className="shadow-xl border-0">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-xl">
-          Lamaran - {format(selectedDate, 'd MMMM yyyy', { locale: id })}
-        </CardTitle>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-5 w-5" />
-        </Button>
-      </CardHeader>
-      <CardContent>
+    <div className="space-y-4">
         <div className="rounded-lg border overflow-hidden">
           <Table>
             <TableHeader>
@@ -263,7 +254,6 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
             Tambah Lamaran
           </Button>
         )}
-      </CardContent>
-    </Card>
+    </div>
   );
 }

@@ -16,24 +16,29 @@ import { id } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useJobApplications } from '@/hooks/useJobApplications';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
 export function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const { getApplicationCountByDate } = useJobApplications();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
   const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
   const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
-  const days: Date[] = [];
+  const allDays: Date[] = [];
   let day = startDate;
   while (day <= endDate) {
-    days.push(day);
+    allDays.push(day);
     day = addDays(day, 1);
   }
+
+  // On mobile, limit to 4 rows (28 days)
+  const days = isMobile ? allDays.slice(0, 28) : allDays;
 
   const weekDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
 

@@ -13,7 +13,7 @@ import {
   isToday
 } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useJobApplications } from '@/hooks/useJobApplications';
 import { cn } from '@/lib/utils';
@@ -69,11 +69,11 @@ export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) 
       </div>
 
       {/* Week days header */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-2 mb-2">
         {weekDays.map((weekDay) => (
           <div 
             key={weekDay} 
-            className="text-center text-sm font-medium text-muted-foreground py-2"
+            className="text-center text-sm font-semibold text-muted-foreground py-2"
           >
             {weekDay}
           </div>
@@ -81,7 +81,7 @@ export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) 
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-2">
         {days.map((dayDate, idx) => {
           const appCount = getApplicationCountByDate(dayDate);
           const isCurrentMonth = isSameMonth(dayDate, currentMonth);
@@ -93,27 +93,32 @@ export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) 
               key={idx}
               onClick={() => onDateSelect(dayDate)}
               className={cn(
-                "relative aspect-square p-1 rounded-xl transition-all duration-200 hover:bg-muted",
-                "flex flex-col items-center justify-start",
-                !isCurrentMonth && "opacity-30",
-                isSelected && "bg-primary text-primary-foreground hover:bg-primary",
-                isTodayDate && !isSelected && "ring-2 ring-primary ring-offset-2"
+                "relative min-h-[80px] p-2 rounded-xl transition-all duration-200 border",
+                "flex flex-col items-center justify-start gap-1",
+                "hover:border-primary hover:shadow-md",
+                !isCurrentMonth && "opacity-30 bg-muted/30",
+                isCurrentMonth && "bg-card",
+                isSelected && "border-primary bg-primary/5 shadow-md",
+                isTodayDate && !isSelected && "border-secondary bg-secondary/10"
               )}
             >
+              {/* Date number */}
               <span className={cn(
-                "text-sm font-medium",
-                isSelected && "text-primary-foreground"
+                "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
+                isTodayDate && "bg-primary text-primary-foreground",
+                isSelected && !isTodayDate && "bg-secondary text-secondary-foreground"
               )}>
                 {format(dayDate, 'd')}
               </span>
+              
+              {/* Job count indicator */}
               {appCount > 0 && (
                 <div className={cn(
-                  "mt-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold",
-                  isSelected 
-                    ? "bg-primary-foreground text-primary" 
-                    : "bg-secondary text-secondary-foreground"
+                  "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold",
+                  "bg-accent text-accent-foreground"
                 )}>
-                  {appCount}
+                  <Briefcase className="w-3 h-3" />
+                  <span>{appCount} job</span>
                 </div>
               )}
             </button>

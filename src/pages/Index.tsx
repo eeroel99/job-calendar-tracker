@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { AuthPage } from '@/components/auth/AuthPage';
-import { Header } from '@/components/layout/Header';
-import { CalendarView } from '@/components/calendar/CalendarView';
-import { ApplicationList } from '@/components/applications/ApplicationList';
-import { Dashboard } from '@/components/dashboard/Dashboard';
-import { ExportButton } from '@/components/export/ExportButton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, LayoutDashboard, Loader2 } from 'lucide-react';
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthPage } from "@/components/auth/AuthPage";
+import { Header } from "@/components/layout/Header";
+import { CalendarView } from "@/components/calendar/CalendarView";
+import { ApplicationList } from "@/components/applications/ApplicationList";
+import { Dashboard } from "@/components/dashboard/Dashboard";
+import { ExportButton } from "@/components/export/ExportButton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar, LayoutDashboard, Loader2 } from "lucide-react";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -28,7 +28,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="calendar" className="space-y-6">
           <div className="flex items-center justify-between">
@@ -42,23 +42,15 @@ const Index = () => {
                 Dashboard
               </TabsTrigger>
             </TabsList>
-            
+
             <ExportButton />
           </div>
 
           <TabsContent value="calendar" className="space-y-6">
             <div className="grid lg:grid-cols-2 gap-6">
-              <CalendarView 
-                selectedDate={selectedDate}
-                onDateSelect={setSelectedDate}
-              />
-              
-              {selectedDate && (
-                <ApplicationList 
-                  selectedDate={selectedDate}
-                  onClose={() => setSelectedDate(null)}
-                />
-              )}
+              <CalendarView selectedDate={selectedDate} onDateSelect={setSelectedDate} />
+
+              {selectedDate && <ApplicationList selectedDate={selectedDate} onClose={() => setSelectedDate(null)} />}
             </div>
           </TabsContent>
 

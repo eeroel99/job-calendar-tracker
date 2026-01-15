@@ -22,6 +22,7 @@ export type Database = {
           created_at: string
           id: string
           notes: string | null
+          position: string | null
           status: Database["public"]["Enums"]["application_status"]
           updated_at: string
           user_id: string
@@ -33,6 +34,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          position?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
           user_id: string
@@ -44,6 +46,7 @@ export type Database = {
           created_at?: string
           id?: string
           notes?: string | null
+          position?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
           user_id?: string

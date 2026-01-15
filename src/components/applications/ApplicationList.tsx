@@ -30,10 +30,12 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
   const [editingId, setEditingId] = useState<string | null>(null);
   
   const [newCompany, setNewCompany] = useState('');
+  const [newPosition, setNewPosition] = useState('');
   const [newApplyVia, setNewApplyVia] = useState('LinkedIn');
   const [newStatus, setNewStatus] = useState<ApplicationStatus>('applied');
 
   const [editCompany, setEditCompany] = useState('');
+  const [editPosition, setEditPosition] = useState('');
   const [editApplyVia, setEditApplyVia] = useState('');
   const [editStatus, setEditStatus] = useState<ApplicationStatus>('applied');
 
@@ -42,12 +44,14 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
     
     await createApplication.mutateAsync({
       company_name: newCompany.trim(),
+      position: newPosition.trim() || undefined,
       apply_via: newApplyVia,
       status: newStatus,
       apply_date: format(selectedDate, 'yyyy-MM-dd'),
     });
 
     setNewCompany('');
+    setNewPosition('');
     setNewApplyVia('LinkedIn');
     setNewStatus('applied');
     setIsAdding(false);
@@ -56,6 +60,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
   const startEditing = (app: JobApplication) => {
     setEditingId(app.id);
     setEditCompany(app.company_name);
+    setEditPosition(app.position || '');
     setEditApplyVia(app.apply_via);
     setEditStatus(app.status);
   };
@@ -63,6 +68,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
   const cancelEditing = () => {
     setEditingId(null);
     setEditCompany('');
+    setEditPosition('');
     setEditApplyVia('');
     setEditStatus('applied');
   };
@@ -71,6 +77,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
     await updateApplication.mutateAsync({
       id,
       company_name: editCompany,
+      position: editPosition.trim() || undefined,
       apply_via: editApplyVia,
       status: editStatus,
     });
@@ -99,16 +106,30 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
   const MobileApplicationCard = ({ app, idx }: { app: JobApplication; idx: number }) => (
     <div className="bg-muted/30 rounded-lg p-3 space-y-2">
       <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="text-xs text-muted-foreground mb-1">#{idx + 1}</div>
+        <div className="flex-1 space-y-1">
+          <div className="text-xs text-muted-foreground">#{idx + 1}</div>
           {editingId === app.id ? (
-            <Input
-              value={editCompany}
-              onChange={(e) => setEditCompany(e.target.value)}
-              className="h-8 text-sm"
-            />
+            <div className="space-y-2">
+              <Input
+                value={editCompany}
+                onChange={(e) => setEditCompany(e.target.value)}
+                className="h-8 text-sm"
+                placeholder="Nama perusahaan"
+              />
+              <Input
+                value={editPosition}
+                onChange={(e) => setEditPosition(e.target.value)}
+                className="h-8 text-sm"
+                placeholder="Posisi"
+              />
+            </div>
           ) : (
-            <div className="font-semibold text-sm">{app.company_name}</div>
+            <>
+              <div className="font-semibold text-sm">{app.company_name}</div>
+              {app.position && (
+                <div className="text-xs text-muted-foreground">{app.position}</div>
+              )}
+            </>
           )}
         </div>
         <div className="flex gap-1">
@@ -179,6 +200,12 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
         className="h-9"
         autoFocus
       />
+      <Input
+        placeholder="Posisi (opsional)"
+        value={newPosition}
+        onChange={(e) => setNewPosition(e.target.value)}
+        className="h-9"
+      />
       <div className="flex gap-2">
         <Select value={newApplyVia} onValueChange={setNewApplyVia}>
           <SelectTrigger className="h-9 text-sm flex-1">
@@ -227,6 +254,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
             <TableRow className="bg-muted/50">
               <TableHead className="w-12 font-semibold">No</TableHead>
               <TableHead className="font-semibold">Perusahaan</TableHead>
+              <TableHead className="font-semibold">Posisi</TableHead>
               <TableHead className="font-semibold">Apply Via</TableHead>
               <TableHead className="font-semibold">Status</TableHead>
               <TableHead className="w-24 text-right font-semibold">Aksi</TableHead>
@@ -245,6 +273,18 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
                     />
                   ) : (
                     app.company_name
+                  )}
+                </TableCell>
+                <TableCell>
+                  {editingId === app.id ? (
+                    <Input
+                      value={editPosition}
+                      onChange={(e) => setEditPosition(e.target.value)}
+                      className="h-8"
+                      placeholder="Posisi"
+                    />
+                  ) : (
+                    <span className="text-muted-foreground">{app.position || '-'}</span>
                   )}
                 </TableCell>
                 <TableCell>
@@ -317,6 +357,14 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
                   />
                 </TableCell>
                 <TableCell>
+                  <Input
+                    placeholder="Posisi"
+                    value={newPosition}
+                    onChange={(e) => setNewPosition(e.target.value)}
+                    className="h-8"
+                  />
+                </TableCell>
+                <TableCell>
                   <Select value={newApplyVia} onValueChange={setNewApplyVia}>
                     <SelectTrigger className="h-8">
                       <SelectValue />
@@ -360,7 +408,7 @@ export function ApplicationList({ selectedDate, onClose }: ApplicationListProps)
 
             {applications.length === 0 && !isAdding && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                   Belum ada lamaran di tanggal ini
                 </TableCell>
               </TableRow>

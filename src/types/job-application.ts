@@ -9,6 +9,7 @@ export interface JobApplication {
   id: string;
   user_id: string;
   company_name: string;
+  position?: string;
   apply_via: string;
   status: ApplicationStatus;
   apply_date: string;

@@ -30,24 +30,25 @@ export default function ApplicationsDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Back button and title */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Button 
             variant="ghost" 
             onClick={() => navigate('/')}
-            className="mb-4 -ml-2"
+            className="mb-3 sm:mb-4 -ml-2 text-sm sm:text-base"
+            size="sm"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali ke Kalender
+            Kembali
           </Button>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-lg sm:text-2xl font-bold">
             Lamaran - {format(selectedDate, 'EEEE, d MMMM yyyy', { locale: id })}
           </h1>
         </div>
 
         {/* Application list */}
-        <div className="bg-card rounded-2xl shadow-lg border p-6">
+        <div className="bg-card rounded-xl sm:rounded-2xl shadow-lg border p-3 sm:p-6">
           <ApplicationList 
             selectedDate={selectedDate} 
             onClose={() => navigate('/')} 

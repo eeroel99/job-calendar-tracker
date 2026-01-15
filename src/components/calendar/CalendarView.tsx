@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   format, 
   startOfMonth, 
@@ -9,7 +10,6 @@ import {
   addMonths, 
   subMonths,
   isSameMonth,
-  isSameDay,
   isToday
 } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -18,14 +18,10 @@ import { Button } from '@/components/ui/button';
 import { useJobApplications } from '@/hooks/useJobApplications';
 import { cn } from '@/lib/utils';
 
-interface CalendarViewProps {
-  onDateSelect: (date: Date) => void;
-  selectedDate: Date | null;
-}
-
-export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) {
+export function CalendarView() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const { getApplicationCountByDate } = useJobApplications();
+  const navigate = useNavigate();
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
@@ -45,7 +41,11 @@ export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) 
   const goToNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const goToToday = () => {
     setCurrentMonth(new Date());
-    onDateSelect(new Date());
+  };
+
+  const handleDateClick = (date: Date) => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    navigate(`/applications/${dateStr}`);
   };
 
   return (
@@ -85,28 +85,25 @@ export function CalendarView({ onDateSelect, selectedDate }: CalendarViewProps) 
         {days.map((dayDate, idx) => {
           const appCount = getApplicationCountByDate(dayDate);
           const isCurrentMonth = isSameMonth(dayDate, currentMonth);
-          const isSelected = selectedDate && isSameDay(dayDate, selectedDate);
           const isTodayDate = isToday(dayDate);
 
           return (
             <button
               key={idx}
-              onClick={() => onDateSelect(dayDate)}
+              onClick={() => handleDateClick(dayDate)}
               className={cn(
                 "relative min-h-[80px] p-2 rounded-xl transition-all duration-200 border",
                 "flex flex-col items-center justify-start gap-1",
                 "hover:border-primary hover:shadow-md",
                 !isCurrentMonth && "opacity-30 bg-muted/30",
                 isCurrentMonth && "bg-card",
-                isSelected && "border-primary bg-primary/5 shadow-md",
-                isTodayDate && !isSelected && "border-secondary bg-secondary/10"
+                isTodayDate && "border-secondary bg-secondary/10"
               )}
             >
               {/* Date number */}
               <span className={cn(
                 "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                isTodayDate && "bg-primary text-primary-foreground",
-                isSelected && !isTodayDate && "bg-secondary text-secondary-foreground"
+                isTodayDate && "bg-primary text-primary-foreground"
               )}>
                 {format(dayDate, 'd')}
               </span>
